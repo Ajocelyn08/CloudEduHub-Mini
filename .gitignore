@@ -28,3 +28,11 @@ Homestead.json
 .env.production
 .phpactor.json
 auth.json
+
+# Laravel backend folder
+backend/vendor/
+backend/node_modules/
+backend/public/storage
+backend/storage/
+backend/.env
+backend/.vscode/
