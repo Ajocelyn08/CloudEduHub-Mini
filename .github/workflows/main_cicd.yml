@@ -22,7 +22,9 @@ jobs:
         coverage: none
     
     - name: Instalar dependencias de Composer
-      run: composer install --no-dev --prefer-dist
+  run: composer install --no-dev --prefer-dist
+  # AÑADIR esta línea para especificar dónde está el composer.json
+  working-directory: ./backend/
       
     # 2. Despliegue al App Service usando el Secreto
     - name: 'Deploy to Azure Web App: oswaldo-eduhub-2025'
