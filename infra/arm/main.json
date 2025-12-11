@@ -1,0 +1,72 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appServicePlanName": {
+            "type": "string",
+            "defaultValue": "CloudEduHub-Plan-D1"
+        },
+        "appName": {
+            "type": "string", 
+            "defaultValue": "cloudeduhub-dia1"
+        }
+    },
+    "variables": {
+        "location": "centralus"  // <-- Cambié a centralus (mejor disponibilidad Free Tier)
+    },
+    "resources": [
+        // SOLO 2 RECURSOS: App Service Plan + App Service
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('appServicePlanName')]",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "F1",
+                "tier": "Free",
+                "size": "F1",
+                "family": "F",
+                "capacity": 1
+            },
+            "kind": "linux",
+            "properties": {
+                "perSiteScaling": false,
+                "reserved": true
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('appName')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+            ],
+            "kind": "app",
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+                "siteConfig": {
+                    "linuxFxVersion": "PHP|8.0",
+                    "appSettings": [
+                        {
+                            "name": "APP_ENV",
+                            "value": "production"
+                        },
+                        {
+                            "name": "WEBSITE_RUN_FROM_PACKAGE",
+                            "value": "1"
+                        }
+                    ],
+                    "use32BitWorkerProcess": true
+                },
+                "httpsOnly": false  // <-- Temporalmente false para pruebas
+            }
+        }
+    ],
+    "outputs": {
+        "appServiceUrl": {
+            "type": "string",
+            "value": "[concat('http://', parameters('appName'), '.azurewebsites.net')]"
+        }
+    }
+}
