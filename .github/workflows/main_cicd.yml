@@ -3,9 +3,11 @@ name: CI/CD Laravel a Azure App Service
 on:
   push:
     branches:
-      - main # Ejecuta el pipeline cada vez que haya un push a la rama principal.
+      # Aseguramos que 'main' tenga la indentación correcta (6 espacios)
+      - main 
 
 jobs:
+  # CORRECCIÓN 1: Aseguramos que 'jobs:' esté pegado al borde izquierdo (nivel 0)
   build-and-deploy:
     runs-on: ubuntu-latest
     environment: Production # Entorno de producción para trazabilidad (opcional)
@@ -22,9 +24,9 @@ jobs:
         coverage: none
     
     - name: Instalar dependencias de Composer
-  run: composer install --no-dev --prefer-dist
-  # AÑADIR esta línea para especificar dónde está el composer.json
-  working-directory: ./backend/
+      # CORRECCIÓN 2: run y working-directory deben estar al mismo nivel que name/uses (Nivel 4)
+      run: composer install --no-dev --prefer-dist
+      working-directory: ./backend/ # <--- Apunta a la carpeta correcta
       
     # 2. Despliegue al App Service usando el Secreto
     - name: 'Deploy to Azure Web App: oswaldo-eduhub-2025'
@@ -33,5 +35,6 @@ jobs:
         app-name: 'oswaldo-eduhub-2025' # Tu App Service
         slot-name: 'Production'
         # Usa el secreto que acabas de crear
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }} 
-        package: .
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        # CORRECCIÓN 3: Indicamos que la carpeta a subir es 'backend', no la raíz.
+        package: ./backend
