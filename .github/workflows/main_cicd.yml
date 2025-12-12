@@ -3,38 +3,37 @@ name: CI/CD Laravel a Azure App Service
 on:
   push:
     branches:
-      # Aseguramos que 'main' tenga la indentación correcta (6 espacios)
+      # Nivel 6 de indentación.
       - main 
 
 jobs:
-  # CORRECCIÓN 1: Aseguramos que 'jobs:' esté pegado al borde izquierdo (nivel 0)
+  # Nivel 0 de indentación.
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: Production # Entorno de producción para trazabilidad (opcional)
+    environment: Production
 
     steps:
     - uses: actions/checkout@v4
     
-    # 1. Configurar PHP y dependencias (Laravel requiere PHP 8.x)
+    # 1. Configurar PHP y dependencias
     - name: Set up PHP 8.2
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.2' # Versión PHP de tu App Service (según Despliegue DevOps)
-        extensions: mbstring, pdo_mysql, zip # Extensiones comunes de Laravel
+        php-version: '8.2' 
+        extensions: mbstring, pdo_mysql, zip
         coverage: none
     
     - name: Instalar dependencias de Composer
-      # CORRECCIÓN 2: run y working-directory deben estar al mismo nivel que name/uses (Nivel 4)
+      # Nivel 6: Correcto para propiedades de 'steps'
       run: composer install --no-dev --prefer-dist
-      working-directory: ./backend/ # <--- Apunta a la carpeta correcta
+      working-directory: ./backend/
       
-    # 2. Despliegue al App Service usando el Secreto
+    # 2. Despliegue al App Service
     - name: 'Deploy to Azure Web App: oswaldo-eduhub-2025'
       uses: azure/webapps-deploy@v2
       with:
-        app-name: 'oswaldo-eduhub-2025' # Tu App Service
+        app-name: 'oswaldo-eduhub-2025'
         slot-name: 'Production'
-        # Usa el secreto que acabas de crear
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        # CORRECCIÓN 3: Indicamos que la carpeta a subir es 'backend', no la raíz.
+        # Nivel 8: Subir la carpeta de la aplicación
         package: ./backend
