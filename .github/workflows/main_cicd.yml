@@ -3,14 +3,11 @@ name: CI/CD Laravel a Azure App Service
 on:
   push:
     branches:
-      # Nivel 6 de indentación.
       - main 
 
 jobs:
-  # Nivel 0 de indentación.
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: Production
 
     steps:
     - uses: actions/checkout@v4
@@ -24,7 +21,6 @@ jobs:
         coverage: none
     
     - name: Instalar dependencias de Composer
-      # Nivel 6: Correcto para propiedades de 'steps'
       run: composer install --no-dev --prefer-dist
       working-directory: ./backend/
       
@@ -33,7 +29,5 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'oswaldo-eduhub-2025'
-        slot-name: 'Production'
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        # Nivel 8: Subir la carpeta de la aplicación
         package: ./backend
